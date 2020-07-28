@@ -38,12 +38,12 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductFormRequest $request)
     {
         return response()->json($this->productService->create($request), 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(ProductFormRequest $request, int $id)
     {
         return response()->json($this->productService->update($request, $id), 200);
     }

@@ -9,10 +9,10 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_USER=lotus
-      - MYSQL_PASSWORD=12345
-      - MYSQL_DATABASE=lotus-sales
       - MYSQL_ROOT_PASSWORD=96430409
+      - MYSQL_DATABASE=sudeste-online
+      - MYSQL_USER=sudeste
+      - MYSQL_PASSWORD=online
 
   laravel:
     tty: true
@@ -21,9 +21,9 @@ services:
     restart: always
     environment:
       - DB_HOST=mysql
-      - DB_DATABASE=lotus-sales
-      - DB_USERNAME=lotus
-      - DB_PASSWORD=12345
+      - DB_DATABASE=sudeste-online
+      - DB_USERNAME=sudeste
+      - DB_PASSWORD=online
     depends_on:
       - mysql
     ports:

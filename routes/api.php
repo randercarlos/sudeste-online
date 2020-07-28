@@ -17,15 +17,14 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
-
-Route::apiResource('categories', 'CategoryController');
-//Route::post('products', 'ProductController@store');
 Route::apiResource('products', 'ProductController');
-Route::apiResource('orders', 'OrderController')->only(['index', 'store']);
-Route::get('reports/sales_period', 'ReportController@salesPeriod');
-Route::get('reports/top10_product_sales', 'ReportController@top10ProductSales');
-Route::get('reports/ship_sales_info', 'ReportController@shipSalesInfo');
-Route::get('reports/email_preview', function() {
-    return new App\Mail\SalesInformation(new \App\Services\ReportService(), new \App\Services\OrderService());
+Route::apiResource('cultures', 'CultureController');
+Route::apiResource('pragues', 'PragueController');
+Route::apiResource('dosages', 'DosageController')->only('store');
+
+Route::fallback(function() {
+    return response()->json([
+        'message' => 'Page Not Found. If error persists, contact info@website.com'
+    ], 404);
 });
 

@@ -37,15 +37,12 @@ class ProductService extends AbstractService
     }
 
     public function create($request) {
-        $data = $request->all();
-
         $path = null;
         if ($request->file('photo')) {
             $path = $request->file('photo')->store(Product::PHOTO_UPLOAD_FOLDER);
-            $data['photo'] = explode('//', $path)[1];
         }
 
-        if (!$product = Product::create($data)) {
+        if (!$product = Product::create( $request->except('photo') + ['photo' => explode('//', $path)[1]]) ) {
             return response()->json('Fail on create product', 500);
         }
 
@@ -53,22 +50,19 @@ class ProductService extends AbstractService
     }
 
     public function update($request, $id) {
-        $data = $request->all();
         if (!$product = Product::find($id)) {
             throw new \Exception("Product with id $id not exists");
         }
 
         $path = null;
         if ($request->file('photo') ) {
-
            $this->deleteOldImage($product);
 
             // upload new photo
             $path = $request->file('photo')->store(Product::PHOTO_UPLOAD_FOLDER);
-            $data['photo'] = explode('//', $path)[1];
         }
 
-        if (!$product = $product->update($data)) {
+        if (!$product = $product->update( $request->except('photo') + ['photo' => explode('//', $path)[1]]) ) {
             return response()->json("Fail on update product with id $id", 500);
         }
 

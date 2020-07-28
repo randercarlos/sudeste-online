@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CategoryFormRequest;
 use App\Http\Resources\ProductResource;
 use App\Services\CategoryService;
 use App\Services\ProductService;
@@ -30,12 +31,12 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryFormRequest $request)
     {
         return response()->json($this->categoryService->create($request), 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(CategoryFormRequest $request, int $id)
     {
         return response()->json($this->categoryService->update($request, $id), 200);
     }

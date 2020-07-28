@@ -24,13 +24,13 @@ class ProductFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'min:3', 'max:60'],
-            'category_id' => ['required'],
-            'cost_price' => ['required', 'numeric', 'min:0.01', 'max:999.99'],
-            'sale_price' => ['required', 'numeric', 'min:0.01', 'max:999.99'],
-            'units_stock' => ['required', 'min:1', 'max:999'],
-            'active' => ['required'],
-            'photo' => ['image', 'max:50', 'dimensions:max_width=150,max_height=150,min_width=50,min_height=50'],
+            'name' => 'required|min:3|max:60',
+            'category_id' => 'required',
+            'cost_price' => 'required|numeric|min:0.01|max:999.99',
+            'sale_price' => 'required|numeric|min:0.01|max:999.99',
+            'units_stock' => 'required|min:1|max:999',
+            'active' => 'required',
+            'photo' => 'image|max:50|dimensions:max_width=150,max_height=150,min_width=50,min_height=50',
         ];
     }
 }
