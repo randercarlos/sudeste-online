@@ -5,16 +5,25 @@ namespace App\Services;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 abstract class AbstractService
 {
     protected $model;
 
-    public function findAll(Request $request) {
+    public function findAll(Request $request): Collection {
         $class = get_class($this->model);
         $obj = new $class;
 
         return $obj->get();
+    }
+
+    public function findAllOrderedByName(): ?Collection {
+        if ($this->model->offsetExists('name')) {
+            return $this->model->orderBy('name')->get();
+        }
+
+        return null;
     }
 
     public function find(int $id): Model {
@@ -24,6 +33,7 @@ abstract class AbstractService
 
         return $record;
     }
+
     public function save(Request $request, int $id = null): Model {
 
         if ($id) {
