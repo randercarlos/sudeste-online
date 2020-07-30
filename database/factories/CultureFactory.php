@@ -1,12 +1,11 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
-
 use App\Models\Culture;
 use Faker\Generator as Faker;
+use Illuminate\Support\Str;
 
 $factory->define(Culture::class, function (Faker $faker) {
     return [
-        'name' => $faker->realText('20'),
+        'name' => Str::random(15),
     ];
 });

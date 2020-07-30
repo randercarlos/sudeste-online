@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Dosage;
 
 class DosageSeeder extends Seeder
 {

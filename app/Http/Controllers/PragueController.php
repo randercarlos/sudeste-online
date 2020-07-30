@@ -2,42 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductFormRequest;
-use App\Services\ProductService;
+use App\Http\Requests\PragueFormRequest;
+use App\Services\PragueService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class PragueController extends Controller
 {
-    private $productService;
+    private $pragueService;
 
-    public function __construct(ProductService $productService) {
-        $this->productService = $productService;
+    public function __construct(PragueService $pragueService) {
+        $this->pragueService = $pragueService;
     }
 
     public function index(Request $request): JsonResponse
     {
-        return response()->json($this->productService->findAll($request));
+        return response()->json($this->pragueService->findAll($request));
     }
 
     public function show(int $id): JsonResponse
     {
-        return response()->json($this->productService->find($id));
+        return response()->json($this->pragueService->find($id));
     }
 
-    public function store(ProductFormRequest $request): JsonResponse
+    public function store(PragueFormRequest $request): JsonResponse
     {
-        return response()->json($this->productService->create($request), 201);
+        return response()->json($this->pragueService->save($request), 201);
     }
 
-    public function update(ProductFormRequest $request, int $id): JsonResponse
+    public function update(PragueFormRequest $request, int $id): JsonResponse
     {
-        return response()->json($this->productService->update($request, $id));
+        return response()->json($this->pragueService->save($request, $id));
     }
 
     public function destroy(int $id): JsonResponse
     {
-        return response()->json($this->productService->delete($id));
+        return response()->json($this->pragueService->delete($id));
     }
 
 }

@@ -16,7 +16,7 @@ services:
 
   laravel:
     tty: true
-    image: docker.io/bitnami/laravel:7-debian-10
+    image: docker.io/bitnami/laravel:7
     container_name: laravel
     restart: always
     environment:

@@ -14,7 +14,7 @@ class CreateDosagesTable extends Migration
     public function up()
     {
         Schema::create('dosages', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('dosage');
             $table->unsignedInteger('product_id');
             $table->unsignedInteger('culture_id');

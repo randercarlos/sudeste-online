@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Prague;
+use Illuminate\Support\Str;
 
 class PragueSeeder extends Seeder
 {

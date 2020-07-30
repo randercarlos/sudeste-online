@@ -15,11 +15,6 @@ class DosageController extends Controller
         $this->dosageService = $dosageService;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request): JsonResponse
     {
         return response()->json($this->dosageService->findAll($request));
@@ -32,12 +27,12 @@ class DosageController extends Controller
 
     public function store(DosageFormRequest $request): JsonResponse
     {
-        return response()->json($this->dosageService->create($request), 201);
+        return response()->json($this->dosageService->save($request), 201);
     }
 
     public function update(DosageFormRequest $request, int $id): JsonResponse
     {
-        return response()->json($this->dosageService->update($request, $id));
+        return response()->json($this->dosageService->save($request, $id));
     }
 
     public function destroy(int $id): JsonResponse

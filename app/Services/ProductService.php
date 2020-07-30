@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Culture;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class ProductService extends AbstractService
 {
@@ -10,5 +14,22 @@ class ProductService extends AbstractService
 
     public function __construct() {
         $this->model = new Product();
+    }
+
+    public function findAll(Request $request): Collection {
+
+        $query = Product::query();
+        $query = $this->buildFilters($query, $request);
+
+        return $query->orderBy($request->query('sort', 'id'),
+            $request->query('order', 'asc'))->get();
+    }
+
+    private function buildFilters(Builder $query, Request $request): Builder {
+        $query->when($request->query('name'), function ($q) use ($request) {
+            return $q->where('name', 'like', '%' . $request->query('name') . '%');
+        });
+
+        return $query;
     }
 }

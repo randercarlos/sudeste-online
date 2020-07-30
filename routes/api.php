@@ -20,11 +20,11 @@ use Illuminate\Support\Facades\Route;
 Route::apiResource('products', 'ProductController');
 Route::apiResource('cultures', 'CultureController');
 Route::apiResource('pragues', 'PragueController');
-Route::apiResource('dosages', 'DosageController')->only('store');
+Route::apiResource('dosages', 'DosageController');
 
 Route::fallback(function() {
     return response()->json([
-        'message' => 'Page Not Found. If error persists, contact info@website.com'
+        'error' => 'Endpoint ' . url()->current() . ' not exists!'
     ], 404);
 });
 

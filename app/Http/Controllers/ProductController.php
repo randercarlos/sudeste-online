@@ -14,11 +14,7 @@ class ProductController extends Controller
     public function __construct(ProductService $productService) {
         $this->productService = $productService;
     }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index(Request $request): JsonResponse
     {
         return response()->json($this->productService->findAll($request));
@@ -31,12 +27,12 @@ class ProductController extends Controller
 
     public function store(ProductFormRequest $request): JsonResponse
     {
-        return response()->json($this->productService->create($request), 201);
+        return response()->json($this->productService->save($request), 201);
     }
 
     public function update(ProductFormRequest $request, int $id): JsonResponse
     {
-        return response()->json($this->productService->update($request, $id));
+        return response()->json($this->productService->save($request, $id));
     }
 
     public function destroy(int $id): JsonResponse

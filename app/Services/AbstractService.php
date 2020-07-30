@@ -37,31 +37,35 @@ abstract class AbstractService
     public function save(Request $request, int $id = null): Model {
 
         if ($id) {
-            if (!$record = $this->model->find($id)) {
+            if (!$this->model = $this->model->find($id)) {
                 throw new \Exception(get_class($this->model) . ' with id ' . $id . ' doesn\'t exists!');
             }
 
-            if (!$record->update($request->all())) {
-                throw new \Exception("Fail on update " . get_class($this->model) . " with values: " . $request->all());
+            if (!$this->model->update($request->all())) {
+                throw new \Exception("Fail on update " . get_class($this->model) .
+                    " with values: " . $request->all());
             }
+
         } else {
             if (!$this->model->fill($request->all())->save()) {
-                throw new \Exception("Fail on create " . get_class($this->model) . " with values: " . $request->all());
+                throw new \Exception("Fail on create " . get_class($this->model) . " with values: "
+                    . $request->all());
             }
+
         }
 
         return $this->model;
     }
 
-    public function delete(int $id): bool {
-        if (!$this->model->find($id)) {
-            throw new \Exception("{ get_class($this->model) } with id $id doesn\'t exists!" );
+    public function delete(int $id): Model {
+        if (!$this->model = $this->model->find($id)) {
+            throw new \Exception(get_class($this->model) . ' with id $id doesn\'t exists!' );
         }
 
         if (!$this->model->delete()) {
-            throw new \Exception("Fail on delete { get_class($this->model) } with id $id" );
+            throw new \Exception('Fail on delete ' . get_class($this->model) . " with id $id" );
         }
 
-        return true;
+        return $this->model;
     }
 }

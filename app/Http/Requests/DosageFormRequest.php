@@ -28,10 +28,10 @@ class DosageFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'dosage' => ['required', 'unique:' . Dosage::class . ',dosage'],
-            'product_id' => ['required', 'exists:' . Product::class . ',id'],
-            'culture_id' => ['required', 'exists:' . Culture::class . ',id'],
-            'prague_id' => ['required', 'exists:' . Prague::class . ',id'],
+            'dosage' => ['required', 'unique:dosages,dosage'],
+            'product_id' => ['required', 'exists:products,id'],
+            'culture_id' => ['required', 'exists:cultures,id'],
+            'prague_id' => ['required', 'exists:pragues,id'],
         ];
     }
 }

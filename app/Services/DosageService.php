@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Dosage;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -19,7 +20,7 @@ class DosageService extends AbstractService
         return Dosage::with(['product', 'culture', 'prague'])->get();
     }
 
-    public function find(int $id): Dosage {
+    public function find(int $id): Model {
         if (!$dosage = Dosage::with(['product', 'culture', 'prague'])->find($id)) {
             throw new ModelNotFoundException("Dosage with id $id doesn't exists!" );
         }

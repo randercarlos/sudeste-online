@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Prague extends Model
 {
     const RECORDS_PER_PAGE = 10;
-    protected $table = 'cultures';
+    protected $table = 'pragues';
     protected $fillable = ['name'];
 }
