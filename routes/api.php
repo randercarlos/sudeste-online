@@ -21,6 +21,8 @@ Route::apiResource('products', 'ProductController');
 Route::apiResource('cultures', 'CultureController');
 Route::apiResource('pragues', 'PragueController');
 Route::apiResource('dosages', 'DosageController');
+Route::get('reports/dosages-data', 'ReportController@dataReport');
+
 
 Route::fallback(function() {
     return response()->json([
