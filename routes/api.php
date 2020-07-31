@@ -14,14 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::middleware('auth:api')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-Route::apiResource('products', 'ProductController');
-Route::apiResource('cultures', 'CultureController');
-Route::apiResource('pragues', 'PragueController');
-Route::apiResource('dosages', 'DosageController');
-Route::get('reports/dosages-data', 'ReportController@dataReport');
+Route::post('auth/login', 'AuthController@login')->name('login');
+
+Route::group(['prefix' => 'auth', 'middleware' => 'auth:api'], function () {
+    Route::post('logout', 'AuthController@logout')->name('logout');
+    Route::post('refresh-token', 'AuthController@refreshToken')->name('refreshToken');
+    Route::post('logged-user', 'AuthController@loggedUser')->name('loggedUser');
+});
+
+
+Route::middleware('auth:api')->group(function () {
+    Route::apiResource('products', 'ProductController');
+    Route::apiResource('cultures', 'CultureController');
+    Route::apiResource('pragues', 'PragueController');
+    Route::apiResource('dosages', 'DosageController');
+    Route::get('reports/dosage-report', 'ReportController@dataReport');
+});
+
 
 
 Route::fallback(function() {

@@ -2,10 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -55,12 +55,19 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if (App::environment() === 'local') {
-            if( $exception instanceOf ValidationException)  {
+        if( $exception instanceOf AuthenticationException) {
 
+            return response()->json([
+                'msg' => 'Unauthenticated. It\'s necessary to be authenticated to access this endpoint'
+            ], 401);
+
+        }
+
+        if (App::environment() === 'local') {
+            if ($exception instanceof ValidationException) {
                 return response()->json([
-                    'error'=> $exception->errors()
-                ],422);
+                    'msg' => $exception->errors()
+                ], 422);
 
             } else if ($exception instanceof ModelNotFoundException) {
                 return response()->json([
@@ -70,9 +77,9 @@ class Handler extends ExceptionHandler
             } else if ($exception instanceof QueryException) {
                 if ($exception->errorInfo[1] === 1062) {
                     return response()->json([
-                        'error'=> str_replace('App\\Models\\', '', $exception->getModel()) .
+                        'error' => str_replace('App\\Models\\', '', $exception->getModel()) .
                             ' already exists and can\'t be duplicate!'
-                    ],422);
+                    ], 422);
                 }
             }
 
@@ -85,7 +92,6 @@ class Handler extends ExceptionHandler
                     'stacktrace' => $exception->getTraceAsString()
                 ]
             ], 500);
-
         }
 
         return response()->json([
