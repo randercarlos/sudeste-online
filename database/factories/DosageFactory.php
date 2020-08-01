@@ -13,21 +13,9 @@ use Illuminate\Support\Arr;
 
 $factory->define(Dosage::class, function (Faker $faker) {
     return [
-        'dosage' => rand(1, 900) . Arr::random(['mL', 'Kg', 'g', 'cL']) . ' de ' .
-            Arr::random(['Adubo Químico', 'Bicarbonato de Sódio', 'Fertilizante', 'Fermento Químico', 'Sal de Arruda',
-                'Soda Caústica', 'Iodo', 'Açúcar Mascavo', 'Conservante', 'Agrotóxico']),
+        'dosage' => rand(1, 2000) . Arr::random(['mL', 'Kg', 'g', 'cL']),
         'product_id' => factory(Product::class),
         'culture_id' => factory(Culture::class),
         'prague_id' => factory(Prague::class),
     ];
 });
-
-//$factory->state(Dosage::class, 'create_relationship_model', [
-//    'dosage' => rand(1, 900) . Arr::random(['mL', 'Kg', 'g', 'cL']) . ' de ' .
-//        Arr::random(['Adubo Químico', 'Bicarbonato de Sódio', 'Fertilizante', 'Fermento Químico', 'Sal de Arruda',
-//            'Soda Caústica', 'Iodo', 'Açúcar Mascavo', 'Conservante', 'Agrotóxico']),
-//    'product_id' => factory(Product::class),
-//    'culture_id' => factory(Culture::class),
-//    'prague_id' => factory(Prague::class),
-//]);
-

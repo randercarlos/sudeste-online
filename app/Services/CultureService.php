@@ -20,14 +20,20 @@ class CultureService extends AbstractService
         $query = Culture::query();
         $query = $this->buildFilters($query, $request);
 
-        return $query->orderBy($request->query('sort', 'id'),
-                $request->query('order', 'asc'))->get();
+        return $query->get();
     }
 
     private function buildFilters(Builder $query, Request $request): Builder {
+
         $query->when($request->query('name'), function ($q) use ($request) {
             return $q->where('name', 'like', '%' . $request->query('name') . '%');
         });
+
+        $query->when($request->filled('sort') && $this->model->offsetExists($request->query('sort')),
+            function ($q) use ($request) {
+                return $q->orderBy($request->query('sort'),
+                    $request->query('order', 'asc') === 'asc' ? 'asc' : 'desc');
+            });
 
         return $query;
     }
