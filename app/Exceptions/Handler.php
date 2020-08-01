@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -55,49 +56,51 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if( $exception instanceOf AuthenticationException) {
-
+        if ($exception instanceof AuthenticationException) {
             return response()->json([
                 'msg' => 'Unauthenticated. It\'s necessary to be authenticated to access this endpoint'
             ], 401);
 
-        }
+        } else if ($exception instanceof ValidationException) {
+            return response()->json([
+                'msg' => $exception->errors()
+            ], 422);
 
-        if (App::environment() === 'local') {
-            if ($exception instanceof ValidationException) {
-                return response()->json([
-                    'msg' => $exception->errors()
-                ], 422);
-
-            } else if ($exception instanceof ModelNotFoundException) {
-                return response()->json([
-                    'error' => str_replace('App\\Models\\', '', $exception->getModel()) . ' not found!'],
-                    404);
-
-            } else if ($exception instanceof QueryException) {
-                if ($exception->errorInfo[1] === 1062) {
-                    return response()->json([
-                        'error' => str_replace('App\\Models\\', '', $exception->getModel()) .
-                            ' already exists and can\'t be duplicate!'
-                    ], 422);
-                }
-            }
+        } else if ($exception instanceof ModelNotFoundException) {
 
             return response()->json([
-                'error' => [
-                    'message' => $exception->getMessage(),
-                    'file' => $exception->getFile(),
-                    'line' => $exception->getLine(),
-                    'code' => $exception->getCode(),
-                    'stacktrace' => $exception->getTraceAsString()
-                ]
-            ], 500);
+                'error' => class_basename($exception->getModel()) . ' not found!'
+            ], 404);
+
+        } else if ($exception instanceof QueryException) {
+            if ($exception->errorInfo[1] === 1062) {
+                return response()->json([
+                    'error' => 'A record already exists with this field and can\'t be duplicate!'
+                ], 422);
+            }
         }
 
-        return response()->json([
-            'error' => 'An error occurred. Check the logs for more information.'
-        ], 500);
+        $errorDescription = <<<TEXT
+            ERROR:
+                MESSAGE: {$exception->getMessage()}
+                FILE: {$exception->getFile()}
+                LINE: {$exception->getLine()}
+                CODE: {$exception->getCode()}
+                STACKTRACE: {$exception->getTraceAsString()}
+TEXT;
+        Log::debug($errorDescription);
 
+        if (App::environment() === 'production') {
+            return response()->json([
+                'error' => 'An error occurred. Check the logs for more information.'
+            ], 500);
+
+        } else {
+            return response()->json([
+                'error' => $exception
+            ], 500);
+
+        }
 
         return parent::render($request, $exception);
     }

@@ -1,0 +1,1017 @@
+swagger: "2.0"
+info:
+  description: "Documentação em OpenApi v2(Swagger) da API Restful criada como teste técnico como processo seletivo da Sudeste Online"
+  version: "1.0.0"
+  title: "Sudeste Online"
+  contact:
+    email: "randerccf@gmail.com"
+host: "localhost:3000"
+basePath: "/api"
+tags:
+  - name: "Auth"
+    description: "Endpoints para login, logout, atualização de token e informações do usuário logado."
+  - name: "Produtos"
+    description: "Endpoints para obter, criar, alterar, excluir e pesquisar Produtos."
+  - name: "Culturas"
+    description: "Endpoints para obter, criar, alterar, excluir e pesquisar Culturas."
+  - name: "Pragas"
+    description: "Endpoints para obter, criar, alterar, excluir e pesquisar Pragas."
+  - name: "Dosagens"
+    description: "Endpoints para obter, criar, alterar, excluir e pesquisar Dosagens."
+  - name: "Relatórios"
+    description: "Endpoints para os Relatórios"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /auth/login:
+    post:
+      tags:
+        - "Auth"
+      summary: "Efetua o login na API"
+      description: ""
+      operationId: "login"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "email"
+          in: "formData"
+          description: "Email cadastrado."
+          required: true
+          type: "string"
+        - name: "password"
+          in: "formData"
+          description: "Senha cadastrada."
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "JWT Token Object"
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+              token_type:
+                type: string
+              expires_in:
+                type: integer
+        "401":
+          description: "Unauthorized. Email or password invalid!"
+  /auth/logout:
+    post:
+      tags:
+        - "Auth"
+      summary: "Efetua o logout na API"
+      description: ""
+      operationId: "logout"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "email"
+          in: "formData"
+          description: "Email cadastrado."
+          required: true
+          type: "string"
+        - name: "password"
+          in: "formData"
+          description: "Senha cadastrada."
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Successfully logged out!"
+        "401":
+          description: "Unauthorized. Email or password invalid!"
+  /auth/refresh-token:
+    post:
+      tags:
+        - "Auth"
+      summary: "Gera um Novo JWT Token"
+      description: ""
+      operationId: "refreshToken"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+      responses:
+        "200":
+          description: "Ok"
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+              token_type:
+                type: string
+              expires_in:
+                type: integer
+  /auth/logged-user:
+    post:
+      tags:
+        - "Auth"
+      summary: "Retorna o usuário logado"
+      description: ""
+      operationId: "LoggedUser"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+      responses:
+        "200":
+          description: "Ok."
+          schema:
+            $ref: "#/definitions/User"
+  /products:
+    get:
+      tags:
+        - "Produtos"
+      summary: "Lista os produtos cadastrados"
+      description: ""
+      operationId: "getProduct"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - in: query
+          type: string
+          name: name
+          description: O nome do produto a ser filtrado. Filtra por qualquer parte do nome.
+        - in: query
+          name: sort
+          type: string
+          description: O nome do campo a ser ordenado.
+        - in: query
+          name: order
+          type: string
+          description: O tipo de ordenação. Pode ser asc (crescente) ou desc (decrescente).
+      responses:
+        "200":
+          description: "Products List"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+        "500":
+          description: "Error on list products"
+    post:
+      tags:
+        - "Produtos"
+      summary: "Cria um novo produto"
+      description: ""
+      operationId: "createProduct"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "name"
+          in: "formData"
+          description: "Nome atualizado do produto"
+          required: true
+          type: "string"
+      responses:
+        "201":
+          description: "Created Product"
+          schema:
+            $ref: "#/definitions/Product"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on create product"
+  /products/{id}:
+    get:
+      tags:
+        - "Produtos"
+      summary: "Exibe um produto pelo ID"
+      description: "Retorna um único produto"
+      operationId: "getProductById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID do produto a ser retornado"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Product"
+          schema:
+            $ref: "#/definitions/Product"
+        "404":
+          description: "Product Not Found"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on find product"
+    put:
+      tags:
+        - "Produtos"
+      summary: "Atualiza um produto."
+      description: ""
+      operationId: "updateProduct"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID do produto a ser atualizado"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "name"
+          in: "formData"
+          description: "Nome do produto a ser atualizado"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Updated Product"
+          schema:
+            $ref: "#/definitions/Product"
+        "404":
+          description: "Product Not Found"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on update product"
+    delete:
+      tags:
+        - "Produtos"
+      summary: "Deleta um produto"
+      description: ""
+      operationId: "deleteProduct"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID do produto a ser deletado"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Deleted Product"
+          schema:
+            $ref: "#/definitions/Product"
+        "404":
+          description: "Product Not Found"
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on delete product"
+  /cultures:
+    get:
+      tags:
+        - "Culturas"
+      summary: "Lista as culturas cadastradass"
+      description: ""
+      operationId: "getCulture"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - in: query
+          name: name
+          type: string
+          description: O nome da cultura a ser filtrado. Filtra por qualquer parte do nome.
+        - in: query
+          name: sort
+          type: string
+          description: O nome do campo a ser ordenado.
+        - in: query
+          name: order
+          type: string
+          description: O tipo de ordenação. Pode ser asc (crescente) ou desc (decrescente).
+      responses:
+        "200":
+          description: "Cultures List"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Culture"
+        "500":
+          description: "Error on list cultures"
+    post:
+      tags:
+        - "Culturas"
+      summary: "Cria uma nova cultura"
+      description: ""
+      operationId: "createCulture"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "name"
+          in: "formData"
+          description: "Nome atualizado da cultura"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Created Culture"
+          schema:
+            $ref: "#/definitions/Culture"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on create culture"
+  /cultures/{id}:
+    get:
+      tags:
+        - "Culturas"
+      summary: "Exibe uma cultura pelo ID"
+      description: "Retorna um única cultura"
+      operationId: "getCultureById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da cultura a ser retornada"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Culture"
+          schema:
+            $ref: "#/definitions/Culture"
+        "404":
+          description: "Culture Not Found"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on find culture"
+    put:
+      tags:
+        - "Culturas"
+      summary: "Atualiza uma cultura."
+      description: ""
+      operationId: "updateCulture"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da cultura a ser atualizada"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "name"
+          in: "formData"
+          description: "Nome da cultura a ser atualizada"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Updated Culture"
+          schema:
+            $ref: "#/definitions/Culture"
+        "404":
+          description: "Culture Not Found"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on update culture"
+    delete:
+      tags:
+        - "Culturas"
+      summary: "Deleta uma cultura"
+      description: ""
+      operationId: "deleteCulture"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da cultura a ser deletada"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Deleted Culture"
+          schema:
+            $ref: "#/definitions/Culture"
+        "404":
+          description: "Culture Not Found"
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on delete culture"
+  /pragues:
+    get:
+      tags:
+        - "Pragas"
+      summary: "Lista as pragas cadastradas"
+      description: ""
+      operationId: "getPrague"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - in: query
+          name: name
+          type: string
+          description: O nome da praga a ser filtrada. Filtra por qualquer parte do nome.
+        - in: query
+          name: sort
+          type: string
+          description: O nome do campo a ser ordenado.
+        - in: query
+          name: order
+          type: string
+          description: O tipo de ordenação. Pode ser asc (crescente) ou desc (decrescente).
+      responses:
+        "200":
+          description: "Pragues List"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Prague"
+        "500":
+          description: "Error on list pragues"
+    post:
+      tags:
+        - "Pragas"
+      summary: "Cria uma nova praga"
+      description: ""
+      operationId: "createPrague"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "name"
+          in: "formData"
+          description: "Nome da praga a ser atualizdo"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Created Prague"
+          schema:
+            $ref: "#/definitions/Prague"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on create prague"
+  /pragues/{id}:
+    get:
+      tags:
+        - "Pragas"
+      summary: "Exibe uma praga pelo ID"
+      description: "Retorna um única praga"
+      operationId: "getPragueById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da praga a ser retornada"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Prague"
+          schema:
+            $ref: "#/definitions/Prague"
+        "404":
+          description: "Prague Not Found"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on find prague"
+    put:
+      tags:
+        - "Pragas"
+      summary: "Atualiza uma praga."
+      description: ""
+      operationId: "updatePrague"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da praga a ser atualizada"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "name"
+          in: "formData"
+          description: "Nome da praga a ser atualizada"
+          required: true
+          type: "string"
+      responses:
+        "200":
+          description: "Updated Prague"
+          schema:
+            $ref: "#/definitions/Prague"
+        "404":
+          description: "Prague Not Found"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on update prague"
+    delete:
+      tags:
+        - "Pragas"
+      summary: "Deleta uma praga"
+      description: ""
+      operationId: "deletePrague"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da praga a ser deletada"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Deleted Prague"
+          schema:
+            $ref: "#/definitions/Prague"
+        "404":
+          description: "Prague Not Found"
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on delete prague"
+  /dosages:
+    get:
+      tags:
+        - "Dosagens"
+      summary: "Lista as dosagens cadastradas"
+      description: ""
+      operationId: "getDosage"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - in: query
+          name: dosage
+          type: string
+          description: O nome da dosagem a ser filtrada. Filtra por qualquer parte do nome.
+        - in: query
+          name: sort
+          type: string
+          description: O nome do campo a ser ordenado.
+        - in: query
+          name: order
+          type: string
+          description: O tipo de ordenação. Pode ser asc (crescente) ou desc (decrescente).
+      responses:
+        "200":
+          description: "Dosages List"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Culture"
+        "500":
+          description: "Error on list dosages"
+    post:
+      tags:
+        - "Dosagens"
+      summary: "Cria uma nova dosagem"
+      description: ""
+      operationId: "createDosage"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "dosage"
+          in: "formData"
+          description: "Descrição da dosagem"
+          required: true
+          type: "string"
+        - name: "product_id"
+          in: "formData"
+          description: "ID do produto associado a dosagem"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "culture_id"
+          in: "formData"
+          description: "ID da cultura associada a dosagem"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "prague_id"
+          in: "formData"
+          description: "ID da praga associada a dosagem"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Created Dosage"
+          schema:
+            $ref: "#/definitions/Dosage"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on create dosage"
+  /dosages/{id}:
+    get:
+      tags:
+        - "Dosagens"
+      summary: "Exibe uma dosagem pelo ID"
+      description: "Retorna um única dosagem"
+      operationId: "getDosageById"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da dosagem a ser retornada"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Dosage"
+          schema:
+            $ref: "#/definitions/Dosage"
+        "404":
+          description: "Dosage Not Found"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on find dosage"
+    put:
+      tags:
+        - "Dosagens"
+      summary: "Atualiza uma dosagem."
+      description: ""
+      operationId: "updateDosage"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da dosagem a ser atualizada"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "dosage"
+          in: "formData"
+          description: "Descrição da dosagem a ser atualizada"
+          required: true
+          type: "string"
+        - name: "product_id"
+          in: "formData"
+          description: "ID do produto associado a dosagem a ser atualizado"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "culture_id"
+          in: "formData"
+          description: "ID da cultura associada a dosagem a ser atualizada"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "prague_id"
+          in: "formData"
+          description: "ID da praga associada a dosagem a ser atualizada"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Updated Dosage"
+          schema:
+            $ref: "#/definitions/Dosage"
+        "404":
+          description: "Dosage Not Found"
+        "422":
+          description: "Unprocessable Entity. Invalid data."
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on update dosage"
+    delete:
+      tags:
+        - "Dosagens"
+      summary: "Deleta uma dosagem"
+      description: ""
+      operationId: "deleteDosage"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+        - name: "id"
+          in: "path"
+          description: "ID da dosagem a ser deletada"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "Deleted Dosage"
+          schema:
+            $ref: "#/definitions/Dosage"
+        "404":
+          description: "Dosage Not Found"
+        "401":
+          description: "Unauthorized. Inform Bearer Token in Authorization Header"
+        "500":
+          description: "Error on delete dosage"
+  /reports/dosage-report:
+    get:
+      tags:
+        - "Relatórios"
+      summary: "Relatório de Dosagens"
+      description: ""
+      operationId: "dosageReport"
+      produces:
+        - "application/pdf"
+      parameters:
+        - name: "Authorization Bearer"
+          in: header
+          type: string
+          required: true
+      responses:
+        "200":
+          description: "Dosage Report"
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: integer
+                product:
+                  type: string
+                culture:
+                  type: string
+                prague:
+                  type: string
+                dosage:
+                  type: string
+        "500":
+          description: "Error on generate dosages report"
+definitions:
+  Product:
+    type: "object"
+    required:
+      - "id"
+      - "name"
+      - "created_at"
+      - "updated_at"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
+    xml:
+      name: "Product"
+  Culture:
+    type: "object"
+    required:
+      - "id"
+      - "name"
+      - "created_at"
+      - "updated_at"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
+    xml:
+      name: "Culture"
+  Prague:
+    type: "object"
+    required:
+      - "id"
+      - "name"
+      - "created_at"
+      - "updated_at"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
+    xml:
+      name: "Prague"
+  Dosage:
+    type: "object"
+    required:
+      - "id"
+      - "dosage"
+      - "product_id"
+      - "culture_id"
+      - "prague_id"
+      - "created_at"
+      - "updated_at"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      dosage:
+        type: "string"
+      product_id:
+        type: "integer"
+        format: "int64"
+      culture_id:
+        type: "integer"
+        format: "int64"
+      prague_id:
+        type: "integer"
+        format: "int64"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
+    xml:
+      name: "Dosage"
+  User:
+    type: "object"
+    required:
+      - "id"
+      - "name"
+      - "email"
+      - "password"
+      - "created_at"
+      - "updated_at"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      email_verified_at:
+        type: "string"
+        format: "date-time"
+      password:
+        type: "string"
+      remember_token:
+        type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+      updated_at:
+        type: "string"
+        format: "date-time"
+    xml:
+      name: "User"

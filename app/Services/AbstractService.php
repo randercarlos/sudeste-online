@@ -36,20 +36,23 @@ abstract class AbstractService
 
     public function save(Request $request, int $id = null): Model {
 
+        $class = get_class($this->model);
+
         if ($id) {
+
             if (!$this->model = $this->model->find($id)) {
-                throw new \Exception(get_class($this->model) . ' with id ' . $id . ' doesn\'t exists!');
+                throw new ModelNotFoundException($class . ' with id $id doesn\'t exists!' );
             }
 
             if (!$this->model->update($request->all())) {
-                throw new \Exception("Fail on update " . get_class($this->model) .
-                    " with values: " . $request->all());
+                throw new \Exception("Fail on update " . $class .
+                    " with values: " . collect($request->all())->toJson());
             }
 
         } else {
             if (!$this->model->fill($request->all())->save()) {
-                throw new \Exception("Fail on create " . get_class($this->model) . " with values: "
-                    . $request->all());
+                throw new \Exception("Fail on create " . $class . " with values: "
+                    . collect($request->all())->toJson());
             }
 
         }
@@ -58,12 +61,14 @@ abstract class AbstractService
     }
 
     public function delete(int $id): Model {
+        $class = get_class($this->model);
+
         if (!$this->model = $this->model->find($id)) {
-            throw new \Exception(get_class($this->model) . ' with id $id doesn\'t exists!' );
+            throw new ModelNotFoundException($class . ' with id $id doesn\'t exists!' );
         }
 
         if (!$this->model->delete()) {
-            throw new \Exception('Fail on delete ' . get_class($this->model) . " with id $id" );
+            throw new \Exception('Fail on delete ' . $class . " with id $id" );
         }
 
         return $this->model;
