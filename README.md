@@ -92,7 +92,7 @@ docker-compose exec laravel php artisan test
 
 - [HTML Estático (contém somente os endpoints. Não contém detalhes de parâmetros, campos e corpo de requisições) - Swagger(OpenApi v2)](sudeste-online.swagger.html)
 - [Formato Yaml - Swagger(OpenApi v2)](sudeste-online.swagger.yml)
-- [Insomnia Endpoints Collection - formato json)](sudeste-online.insomnia.json) (Para importar, clique no menu "Application" => Preferences => Data => Clique em "Import Data" => "From File" => selecione o arquivo e clique em "Import")
-- [Postman Endpoints Collection - formato json)](sudeste-online.postman_collection.json) (Para importar, clique no menu "Application" => Preferences => Data => Clique em "Import Data" => "From File" => selecione o arquivo e clique em "Import")
+- [Insomnia Endpoints Collection](sudeste-online.insomnia.json) (Para importar, clique no menu "Application" => Preferences => Data => Clique em "Import Data" => "From File" => selecione o arquivo e clique em "Import")
+- [Postman Endpoints Collection](sudeste-online.postman_collection.json)
 
 Desenvolvido por Rander Carlos :wave: [Linkedin!](https://www.linkedin.com/in/rander-carlos-caetano-freitas-308a63a8/)
